@@ -4,9 +4,9 @@ pipeline {
         stage('Git Checkout') { 
             steps { 
                 script { 
-                    git branch: , 
+                    git branch: test_python, 
                         credentialsId: 'git-PAT', // Provide your credentials ID
-                        url: '' // Provide your Git repository URL
+                        url: 'https://github.com/rajath-optit/flask-hello-world-devops-project.git' // Provide your Git repository URL
                 }
             } 
         }
