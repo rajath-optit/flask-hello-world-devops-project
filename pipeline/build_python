@@ -4,7 +4,7 @@ pipeline {
         stage('Git Checkout') { 
             steps { 
                 script { 
-                    git branch: test_python, 
+                    git branch: 'test_python', 
                         credentialsId: 'rajath-my-git-pat', // Provide your credentials ID
                         url: 'https://github.com/rajath-optit/flask-hello-world-devops-project.git' // Provide your Git repository URL
                         echo"addded git"
