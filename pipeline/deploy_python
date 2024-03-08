@@ -1,25 +1,24 @@
 pipeline {
     agent any
 
-    stages {
-        stage('Git Checkout') {
-            steps {
-                script {
-                    git branch: 'test_python',
-                        credentialsId: 'rajath-my-git-pat',
-                        url: 'https://github.com/rajath-optit/flask-hello-world-devops-project.git'
-                    echo "Checked out Git repository"
-                }
+    stage('Git Checkout') {
+        steps {
+            script {
+                git branch: 'test_python',
+                    credentialsId: 'rajath-my-git-pat',
+                    url: 'https://github.com/rajath-optit/flask-hello-world-devops-project.git'
+                echo "Checked out Git repository"
             }
         }
-        stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    withCredentials([file(credentialsId: 'poc-kube-cluster-cred', variable: 'KUBECONFIG')]) {
-                        sh 'mkdir -p $HOME/.kube/ && cat $KUBECONFIG > $HOME/.kube/config'
-                        sh 'kubectl apply -f deployment.yaml -n optit-lab-python'
-                        sh 'kubectl apply -f service.yaml -n optit-lab-python'
-                    }
+    }
+
+    stage('Deploy to Kubernetes') {
+        steps {
+            script {
+                withCredentials([file(credentialsId: 'poc-kube-cluster-cred', variable: 'KUBECONFIG')]) {
+                    sh 'mkdir -p $HOME/.kube/ && cat $KUBECONFIG > $HOME/.kube/config'
+                    sh 'kubectl apply -f deployment.yaml -n optit-lab-python'
+                    sh 'kubectl apply -f service.yaml -n optit-lab-python'
                 }
             }
         }
