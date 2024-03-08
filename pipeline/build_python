@@ -32,8 +32,6 @@ pipeline {
         stage('Push') {
             steps {
                 echo 'Pushing image with pythonlatest tag..'
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKERHUB_CREDENTIALS_PSW', usernameVariable: 'DOCKERHUB_CREDENTIALS_USR')]) {
-                    sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW'
                     sh 'docker tag raorajath/flask-hello-world:latest raorajath/flask-hello-world:pythonlatest'
                     sh 'docker push raorajath/flask-hello-world:pythonlatest'
                 }
