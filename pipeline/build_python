@@ -28,18 +28,30 @@ pipeline {
                 sh 'docker run --name flask-hello-world raorajath/flask-hello-world /bin/bash -c "pytest test.py && flake8"'
             }
         }
-        
+        stage('Docker Login') {
+            steps {
+                script {
+                    echo 'Logging in to Docker registry...'
+                    sh "docker login -u YOUR_DOCKER_USERNAME -p YOUR_DOCKER_PASSWORD"
+                }
+            }
+        }
         stage('Push') {
         steps {
-        echo 'Pushing image with pythonlatest tag..'
-        withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKERHUB_CREDENTIALS_PSW', usernameVariable: 'DOCKERHUB_CREDENTIALS_USR')]) {
-            sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW'
             sh 'docker tag raorajath/flask-hello-world:latest raorajath/flask-hello-world:pythonlatest'
             sh 'docker push raorajath/flask-hello-world:pythonlatest'
                 }
             }
         }
         
+        stage('Docker Run') {
+            steps {
+                script {
+                    echo 'Running Docker container...'
+                    sh "docker run -p 8080:80 -d raorajath/flask-hello-world:pythonlatest"
+                }
+            }
+        }
         stage('Final Cleanup') {
             steps {
                 echo 'Final cleanup..'
@@ -55,9 +67,6 @@ pipeline {
                 }
             }
         }
-
-        // Later in your pipeline or another job
-
         // Pulling the Docker image
         stage('Docker Pull') {
             steps {
