@@ -10,18 +10,17 @@ pipeline {
         GIT_URL = 'https://github.com/rajath-optit/flask-hello-world-devops-project.git'
     }
     
-    stage('Git Checkout') { 
-            steps { 
-                script { 
-                    git branch: 'test_python', 
-                        credentialsId: 'rajath-my-git-pat', // Provide your credentials ID
-                        url: 'https://github.com/rajath-optit/flask-hello-world-devops-project.git' // Provide your Git repository URL
-                        echo"addded git"
-                }
-            } 
+    stage('Git Checkout') {
+    steps {
+        script {
+            git branch: 'test_python',
+                credentialsId: 'rajath-my-git-pat',
+                url: 'https://github.com/rajath-optit/flask-hello-world-devops-project.git' // Add a comma here
+            echo "added git" // Fix the typo in the echo statement
         }
-
-        stage('Cleanup') {
+    }
+}
+ stage('Cleanup') {
             steps {
                 echo 'Cleaning up old containers and images..'
                 sh 'docker stop $CONTAINER_NAME || true'
