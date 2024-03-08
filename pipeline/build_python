@@ -10,14 +10,15 @@ pipeline {
         GIT_URL = 'https://github.com/rajath-optit/flask-hello-world-devops-project.git'
     }
     
-    stages {
-        stage('Git Checkout') {
-            steps {
-                echo 'Checking out Git repository...'
-                script {
-                    git branch: GIT_BRANCH, credentialsId: GIT_CREDENTIALS, url: GIT_URL
+    stage('Git Checkout') { 
+            steps { 
+                script { 
+                    git branch: 'test_python', 
+                        credentialsId: 'rajath-my-git-pat', // Provide your credentials ID
+                        url: 'https://github.com/rajath-optit/flask-hello-world-devops-project.git' // Provide your Git repository URL
+                        echo"addded git"
                 }
-            }
+            } 
         }
 
         stage('Cleanup') {
