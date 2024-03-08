@@ -36,12 +36,14 @@ pipeline {
             }
         }
 
-        stage('Push') {
+        stage('Docker Login and Push') {
             steps {
-                sh 'docker tag raorajath/flask-hello-world:pythonlatest raorajath/flask-hello-world:latest'
-                sh 'docker push raorajath/flask-hello-world:latest'
+        echo 'Logging in to Docker registry...'
+        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+        sh 'docker push raorajath/flask-hello-world:pythonlatest'
             }
         }
+
 
         stage('Docker Run') {
             steps {
