@@ -19,3 +19,13 @@ spec:
       containers:
         - name: flask-hello
           image: raorajath/flask-hello-world:pythonlatest  
+          ports:
+            - containerPort: 8585
+              name: http
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
