@@ -26,7 +26,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running Docker container...'
-                    sh "docker run -p 8080:80 -d raorajath/flask-hello-world:pythonlatest"
+                    sh "docker run -p 8484:80 -d raorajath/flask-hello-world:pythonlatest"
                 }
             }
         }
