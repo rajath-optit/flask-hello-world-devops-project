@@ -13,20 +13,11 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Docker Pull') {
             steps {
                 script {
-                    echo 'Building Docker image...'
-                    sh 'docker build -t raorajath/flask-hello-world:pythonlatest .'
-                }
-            }
-        }
-
-        stage('Docker Login') {
-            steps {
-                script {
-                    echo 'Logging in to Docker registry...'
-                    sh "docker login -u YOUR_DOCKER_USERNAME -p YOUR_DOCKER_PASSWORD"
+                    echo 'Pulling Docker image...'
+                    sh "docker pull raorajath/flask-hello-world:pythonlatest"
                 }
             }
         }
@@ -39,14 +30,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Docker Publish') {
-            steps {
-                script {
-                    echo 'Publishing Docker image...'
-                    sh "docker push raorajath/flask-hello-world:pythonlatest"
-                }
-            }
-        }
     }
 }
+
