@@ -1,45 +1,27 @@
 pipeline {
-    agent any 
-    environment {
-        DOCKER_HUB_REPO = "raorajath/flask-hello-world"
-        CONTAINER_NAME = "flask-hello-world"
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
-        GIT_CREDENTIALS = credentials('rajath-my-git-pat')
-        GIT_BRANCH = 'test_python'
-        GIT_URL = 'https://github.com/rajath-optit/flask-hello-world-devops-project.git'
-        KUBE_NAMESPACE = 'optit-lab-python'  // Existing Kubernetes namespace
-        KUBE_CRED_ID = 'poc-kube-cluster-cred'
-        KUBE_CONFIG = credentials(KUBE_CRED_ID)
-    }
+    agent any
+
     stages {
         stage('Git Checkout') {
             steps {
                 script {
-                    git branch: GIT_BRANCH,
-                        credentialsId: GIT_CREDENTIALS,
-                        url: GIT_URL
+                    git branch: 'test_python',
+                        credentialsId: 'rajath-my-git-pat',
+                        url: 'https://github.com/rajath-optit/flask-hello-world-devops-project.git'
                 }
             }
         }
+
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    withCredentials([file(credentialsId: KUBE_CRED_ID, variable: 'KUBECONFIG')]) {
+                    withCredentials([file(credentialsId: 'poc-kube-cluster-cred', variable: 'KUBECONFIG')]) {
                         sh 'mkdir -p $HOME/.kube/ && cat $KUBECONFIG > $HOME/.kube/config'
-                        sh "kubectl apply -f deployment.yaml -n $KUBE_NAMESPACE"
-                        sh "kubectl apply -f service.yaml -n $KUBE_NAMESPACE"
+                        sh 'kubectl apply -f deployment.yaml -n optit-lab-python'
+                        sh 'kubectl apply -f service.yaml -n optit-lab-python'
                     }
                 }
             }
         }
-        stage('Cleanup in Kubernetes') {
-            steps {
-                script {
-                    withCredentials([file(credentialsId: KUBE_CRED_ID, variable: 'KUBECONFIG')]) {
-                        sh 'kubectl delete deployments --all -n $KUBE_NAMESPACE'
-                        sh 'kubectl delete services --all -n $KUBE_NAMESPACE'
-                  }
-             }
-         }
     }
 }
