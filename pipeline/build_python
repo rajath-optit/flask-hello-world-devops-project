@@ -1,12 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_IMAGE = 'raorajath/flask-hello-world:pythonlatest'
-        CONTAINER_NAME = 'flask-hello-world-container'
-        DOCKER_PORT = 8282
-    }
-
     stages {
         stage('Git Checkout') {
             steps {
@@ -18,21 +12,30 @@ pipeline {
                 }
             }
         }
-        stage('Run Docker Container') {
+
+        stage('Docker Pull') {
             steps {
                 script {
-                    // Check if the container is already running
-                    def isContainerRunning = sh(script: "docker ps -q -f name=${CONTAINER_NAME}", returnStatus: true).trim()
+                    echo 'Pulling Docker image...'
+                    sh "docker pull raorajath/flask-hello-world:pythonlatest"
+                }
+            }
+        }
 
-                    if (isContainerRunning) {
-                        // Stop the existing container
-                        sh "docker stop ${CONTAINER_NAME}"
-                        echo "Stopped existing container"
-                    }
+        stage('Docker Run') {
+            steps {
+                script {
+                    echo 'Running Docker container...'
+                    sh "docker run -p 8181:80 -d raorajath/flask-hello-world:pythonlatest"
+                }
+            }
+        }
 
-                    // Run the container with dynamic port assignment
-                    sh "docker run -p ${DOCKER_PORT}:80 -d --name ${CONTAINER_NAME} ${DOCKER_IMAGE}"
-                    echo "Started Docker container"
+        stage('Cleanup') {
+            steps {
+                script {
+                    echo 'Skipping prune step for testing...'
+                    // You can add any additional cleanup steps here if needed
                 }
             }
         }
