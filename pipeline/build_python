@@ -1,6 +1,12 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_IMAGE = 'raorajath/flask-hello-world:pythonlatest'
+        CONTAINER_NAME = 'flask-hello-world-container'
+        DOCKER_PORT = 8282
+    }
+
     stages {
         stage('Git Checkout') {
             steps {
@@ -13,23 +19,35 @@ pipeline {
             }
         }
 
-        stage('Docker Pull') {
+        stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    echo 'Pulling Docker image...'
-                    sh "docker pull raorajath/flask-hello-world:pythonlatest"
+                    withCredentials([file(credentialsId: 'poc-kube-cluster-cred', variable: 'KUBECONFIG')]) {
+                        sh 'mkdir -p $HOME/.kube/ && cat $KUBECONFIG > $HOME/.kube/config'
+                        sh 'kubectl apply -f deployment.yaml -n optit-lab-python'
+                        sh 'kubectl apply -f service.yaml -n optit-lab-python'
+                    }
                 }
             }
         }
 
-        stage('Docker Run') {
+        stage('Run Docker Container') {
             steps {
                 script {
-                    echo 'Running Docker container...'
-                    sh "docker run -p 8484:80 -d raorajath/flask-hello-world:pythonlatest"
+                    // Check if the container is already running
+                    def isContainerRunning = sh(script: "docker ps -q -f name=${CONTAINER_NAME}", returnStatus: true).trim()
+
+                    if (isContainerRunning) {
+                        // Stop the existing container
+                        sh "docker stop ${CONTAINER_NAME}"
+                        echo "Stopped existing container"
+                    }
+
+                    // Run the container with dynamic port assignment
+                    sh "docker run -p ${DOCKER_PORT}:80 -d --name ${CONTAINER_NAME} ${DOCKER_IMAGE}"
+                    echo "Started Docker container"
                 }
             }
         }
     }
 }
-
