@@ -13,9 +13,17 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('Build and Deploy to Kubernetes') {
             steps {
                 script {
+                    // Add your build steps here
+                    // For example, if you have a Dockerfile, build the Docker image
+                    sh 'docker build -t your_image_name:tag -f path_to_your_Dockerfile .'
+
+                    // Push the Docker image to a registry if needed
+                    // sh 'docker push your_image_name:tag'
+
+                    // Deploy to Kubernetes
                     withCredentials([file(credentialsId: 'poc-kube-cluster-cred', variable: 'KUBECONFIG')]) {
                         sh 'mkdir -p $HOME/.kube/ && cat $KUBECONFIG > $HOME/.kube/config'
                         sh 'kubectl apply -f deployment.yaml -n optit-lab-python'
