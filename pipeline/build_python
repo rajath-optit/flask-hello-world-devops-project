@@ -2,48 +2,40 @@ pipeline {
     agent any
 
     stages {
-        stage('Git Checkout') { 
-            steps { 
-                script { 
-                    git branch: 'test_python', 
+        stage('Git Checkout') {
+            steps {
+                script {
+                    git branch: 'test_python',
                         credentialsId: 'rajath-my-git-pat',
                         url: 'https://github.com/rajath-optit/flask-hello-world-devops-project.git'
-                    echo "Added git"
+                    echo "Checked out Git repository"
                 }
-            } 
+            }
         }
 
         stage('Build') {
             steps {
-                echo 'Building Docker image..'
+                echo 'Building Docker image...'
                 sh 'docker image build -t raorajath/flask-hello-world:pythonlatest .'
             }
         }
-        
+
         stage('Test') {
             steps {
-                echo 'Testing..'
+                echo 'Testing...'
                 sh 'docker stop flask-hello-world || true'
                 sh 'docker rm flask-hello-world || true'
                 sh 'docker run --name flask-hello-world raorajath/flask-hello-world:pythonlatest /bin/bash -c "pytest test.py && flake8"'
             }
         }
 
-        stage('Docker Login') {
-            steps {
-                echo 'Logging in to Docker registry...'
-                sh "docker login -u YOUR_DOCKER_USERNAME -p YOUR_DOCKER_PASSWORD"
-            }
-        }
-
         stage('Docker Login and Push') {
             steps {
-        echo 'Logging in to Docker registry...'
-        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
-        sh 'docker push raorajath/flask-hello-world:pythonlatest'
+                echo 'Logging in to Docker registry...'
+                sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
+                sh 'docker push raorajath/flask-hello-world:pythonlatest'
             }
         }
-
 
         stage('Docker Run') {
             steps {
@@ -56,7 +48,7 @@ pipeline {
 
         stage('Final Cleanup') {
             steps {
-                echo 'Final cleanup..'
+                echo 'Final cleanup...'
                 sh 'docker system prune -af --volumes'
             }
         }
