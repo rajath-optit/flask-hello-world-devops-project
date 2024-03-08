@@ -1,8 +1,21 @@
 FROM python:3.6
-MAINTAINER " " # Change the name and email address
-COPY app.py test.py /app/
+MAINTAINER YourName <your.email@example.com> # Replace with your name and email address
+
+# Create the /app directory in the image
+RUN mkdir /app
 WORKDIR /app
-RUN pip install flask pytest flake8 # This downloads all the dependencies
-CMD ["python", "app.py"]
+
+# Copy only the requirements file initially
+COPY requirements.txt .
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Now, copy the entire application code
+COPY . .
+
 # Make port 80 available to the world outside this container
 EXPOSE 80
+
+# Define the command to run your application
+CMD ["python", "app.py"]
