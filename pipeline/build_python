@@ -32,9 +32,8 @@ pipeline {
         stage('Push') {
             steps {
                 echo 'Pushing image with pythonlatest tag..'
-                    sh 'docker tag raorajath/flask-hello-world:latest raorajath/flask-hello-world:pythonlatest'
-                    sh 'docker push raorajath/flask-hello-world:pythonlatest'
-                }
+                sh 'docker tag raorajath/flask-hello-world:latest raorajath/flask-hello-world:pythonlatest'
+                sh 'docker push raorajath/flask-hello-world:pythonlatest'
             }
         }
         
@@ -42,6 +41,27 @@ pipeline {
             steps {
                 echo 'Final cleanup..'
                 sh 'docker system prune -af --volumes'
+            }
+        }
+
+        stage('Docker Publish') {
+            steps {
+                script {
+                    echo 'Publishing Docker image...'
+                    sh "docker push raorajath/flask-hello-world:pythonlatest"
+                }
+            }
+        }
+
+        // Later in your pipeline or another job
+
+        // Pulling the Docker image
+        stage('Docker Pull') {
+            steps {
+                script {
+                    echo 'Pulling Docker image...'
+                    sh "docker pull raorajath/flask-hello-world:pythonlatest"
+                }
             }
         }
     }
