@@ -1,14 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: flask-hello-service-nodeport # name of the service
+  name: flask-hello-service-nodeport
+  namespace: optit-lab-python  # Specify the namespace here
 
 spec:
-  type: NodePort # Used for accessing a port externally
+  type: NodePort
   ports:
-    - port: 5000 # Service port
-      targetPort: 5000 # Pod port, default: same as port
-      nodePort: 30008 # Node port which can be used externally, default: auto-assign any free port
-  selector: # Which pods to expose externally ?
+    - port: 5000
+      targetPort: 5000
+      nodePort: 30008
+  selector:
     app: flask-hello
     tier: frontend
