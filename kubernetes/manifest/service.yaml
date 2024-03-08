@@ -1,15 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: flask-hello-service-nodeport
+  name: flask-hello-world-devops-project-service
   namespace: optit-lab-python  # Specify the namespace here
-
+labels:
+  app: flask-hello
 spec:
-  type: NodePort
-  ports:
-    - port: 5000
-      targetPort: 5000
-      nodePort: 30008
   selector:
     app: flask-hello
     tier: frontend
+  ports:
+    - port: 8585
+      targetPort: 8585
