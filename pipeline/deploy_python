@@ -8,10 +8,10 @@ pipeline {
                     git branch: 'test_python',
                         credentialsId: 'rajath-my-git-pat',
                         url: 'https://github.com/rajath-optit/flask-hello-world-devops-project.git'
+                    echo "Checked out Git repository"
                 }
             }
         }
-
         stage('Deploy to Kubernetes') {
             steps {
                 script {
