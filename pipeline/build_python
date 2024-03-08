@@ -16,24 +16,33 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building Docker image...'
-                sh 'docker build -t raorajath/flask-hello-world:pythonlatest .'
+                sh 'sudo docker build -t raorajath/flask-hello-world:pythonlatest .'
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Testing...'
-                sh 'docker stop flask-hello-world || true'
-                sh 'docker rm flask-hello-world || true'
-                sh 'docker run --name flask-hello-world raorajath/flask-hello-world:pythonlatest /bin/bash -c "pytest test.py && flake8"'
+                sh 'sudo docker stop flask-hello-world || true'
+                sh 'sudo docker rm flask-hello-world || true'
+                sh 'sudo docker run --name flask-hello-world raorajath/flask-hello-world:pythonlatest /bin/bash -c "pytest test.py && flake8"'
             }
         }
 
         stage('Docker Login and Push') {
             steps {
                 echo 'Logging in to Docker registry...'
-                sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
-                sh 'docker push raorajath/flask-hello-world:pythonlatest'
+
+                // Use expect to handle the password prompt
+                sh '''
+                    expect -c '
+                    spawn sudo -u optit docker login -u $DOCKER_USERNAME --password-stdin
+                    expect "Password:" { send "D@rkfl@m3\r" }
+                    interact
+                    '
+                '''
+                
+                sh 'sudo docker push raorajath/flask-hello-world:pythonlatest'
             }
         }
 
@@ -41,7 +50,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running Docker container...'
-                    sh "docker run -p 8080:80 -d raorajath/flask-hello-world:pythonlatest"
+                    sh "sudo docker run -p 8080:80 -d raorajath/flask-hello-world:pythonlatest"
                 }
             }
         }
@@ -49,7 +58,7 @@ pipeline {
         stage('Final Cleanup') {
             steps {
                 echo 'Final cleanup...'
-                sh 'docker system prune -af --volumes'
+                sh 'sudo docker system prune -af --volumes'
             }
         }
 
@@ -57,7 +66,7 @@ pipeline {
             steps {
                 script {
                     echo 'Publishing Docker image...'
-                    sh "docker push raorajath/flask-hello-world:pythonlatest"
+                    sh "sudo docker push raorajath/flask-hello-world:pythonlatest"
                 }
             }
         }
@@ -66,9 +75,10 @@ pipeline {
             steps {
                 script {
                     echo 'Pulling Docker image...'
-                    sh "docker pull raorajath/flask-hello-world:pythonlatest"
+                    sh "sudo docker pull raorajath/flask-hello-world:pythonlatest"
                 }
             }
         }
     }
 }
+
