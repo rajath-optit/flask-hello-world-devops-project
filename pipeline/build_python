@@ -1,57 +1,41 @@
 pipeline {
     agent any
     
-    environment {
-        DOCKER_HUB_REPO = "raorajath/flask-hello-world"
-        CONTAINER_NAME = "flask-hello-world"
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
-        GIT_CREDENTIALS = credentials('rajath-my-git-pat')
-        GIT_BRANCH = 'test_python'
-        GIT_URL = 'https://github.com/rajath-optit/flask-hello-world-devops-project.git'
-    }
-    
-    stage('Git Checkout') {
-    steps {
-        script {
-            git branch: 'test_python',
-                credentialsId: 'rajath-my-git-pat',
-                url: 'https://github.com/rajath-optit/flask-hello-world-devops-project.git' // Add a comma here
-            echo "added git" // Fix the typo in the echo statement
-        }
-    }
-}
- stage('Cleanup') {
-            steps {
-                echo 'Cleaning up old containers and images..'
-                sh 'docker stop $CONTAINER_NAME || true'
-                sh 'docker rm $CONTAINER_NAME || true'
-                sh 'docker rmi -f $(docker images -q) || true'
-            }
+    stages {
+        stage('Git Checkout') { 
+            steps { 
+                script { 
+                    git branch: 'test_python', 
+                        credentialsId: 'rajath-my-git-pat', // Provide your credentials ID
+                        url: 'https://github.com/rajath-optit/flask-hello-world-devops-project.git' // Provide your Git repository URL
+                    echo "Added git"
+                }
+            } 
         }
 
         stage('Build') {
             steps {
                 echo 'Building Docker image..'
-                sh 'docker image build -t $DOCKER_HUB_REPO:latest .'
+                sh 'docker image build -t raorajath/flask-hello-world:latest .'
             }
         }
         
         stage('Test') {
             steps {
                 echo 'Testing..'
-                sh 'docker stop $CONTAINER_NAME || true'
-                sh 'docker rm $CONTAINER_NAME || true'
-                sh 'docker run --name $CONTAINER_NAME $DOCKER_HUB_REPO /bin/bash -c "pytest test.py && flake8"'
+                sh 'docker stop flask-hello-world || true'
+                sh 'docker rm flask-hello-world || true'
+                sh 'docker run --name flask-hello-world raorajath/flask-hello-world /bin/bash -c "pytest test.py && flake8"'
             }
         }
         
         stage('Push') {
             steps {
                 echo 'Pushing image with pythonlatest tag..'
-                withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, passwordVariable: 'DOCKERHUB_CREDENTIALS_PSW', usernameVariable: 'DOCKERHUB_CREDENTIALS_USR')]) {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKERHUB_CREDENTIALS_PSW', usernameVariable: 'DOCKERHUB_CREDENTIALS_USR')]) {
                     sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW'
-                    sh 'docker tag $DOCKER_HUB_REPO:latest $DOCKER_HUB_REPO:pythonlatest'
-                    sh 'docker push $DOCKER_HUB_REPO:pythonlatest'
+                    sh 'docker tag raorajath/flask-hello-world:latest raorajath/flask-hello-world:pythonlatest'
+                    sh 'docker push raorajath/flask-hello-world:pythonlatest'
                 }
             }
         }
