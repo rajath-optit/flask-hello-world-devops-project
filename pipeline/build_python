@@ -30,15 +30,6 @@ pipeline {
                 }
             }
         }
-    stage('Cleanup') {
-        steps {
-        script {
-            echo 'Pruning Docker system...'
-            sh 'docker system prune -af --volumes'
-        }
-    }
-}
-
     }
 }
 
