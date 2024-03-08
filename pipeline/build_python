@@ -13,6 +13,13 @@ pipeline {
             }
         }
 
+        stage('Switch to Sudo') {
+            steps {
+                echo 'Switching to sudo...'
+                sh 'echo D@rkfl@m3 | sudo -S -u optit sudo -s'
+            }
+        }
+
         stage('Build') {
             steps {
                 echo 'Building Docker image...'
@@ -81,4 +88,3 @@ pipeline {
         }
     }
 }
-
