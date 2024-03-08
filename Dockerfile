@@ -4,3 +4,5 @@ COPY app.py test.py /app/
 WORKDIR /app
 RUN pip install flask pytest flake8 # This downloads all the dependencies
 CMD ["python", "app.py"]
+# Make port 80 available to the world outside this container
+EXPOSE 80
