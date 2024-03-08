@@ -18,19 +18,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    withCredentials([file(credentialsId: 'poc-kube-cluster-cred', variable: 'KUBECONFIG')]) {
-                        sh 'mkdir -p $HOME/.kube/ && cat $KUBECONFIG > $HOME/.kube/config'
-                        sh 'kubectl apply -f deployment.yaml -n optit-lab-python'
-                        sh 'kubectl apply -f service.yaml -n optit-lab-python'
-                    }
-                }
-            }
-        }
-
         stage('Run Docker Container') {
             steps {
                 script {
