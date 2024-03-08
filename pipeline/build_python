@@ -1,10 +1,5 @@
 pipeline {
     agent any
-    
-    environment {
-        DOCKER_IMAGE_NAME = 'raorajath/flask-hello-world'
-        DOCKER_IMAGE_TAG = 'pythonlatest'
-    }
 
     stages {
         stage('Git Checkout') { 
@@ -21,7 +16,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building Docker image..'
-                sh 'docker image build -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG .'
+                sh 'docker image build -t raorajath/flask-hello-world:pythonlatest .'
             }
         }
         
@@ -30,25 +25,33 @@ pipeline {
                 echo 'Testing..'
                 sh 'docker stop flask-hello-world || true'
                 sh 'docker rm flask-hello-world || true'
-                sh 'docker run --name flask-hello-world $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG /bin/bash -c "pytest test.py && flake8"'
+                sh 'docker run --name flask-hello-world raorajath/flask-hello-world:pythonlatest /bin/bash -c "pytest test.py && flake8"'
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                echo 'Logging in to Docker registry...'
+                sh "docker login -u YOUR_DOCKER_USERNAME -p YOUR_DOCKER_PASSWORD"
             }
         }
 
         stage('Push') {
             steps {
-                sh "docker tag $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG $DOCKER_IMAGE_NAME:latest"
-                sh "docker push $DOCKER_IMAGE_NAME:latest"
+                sh 'docker tag raorajath/flask-hello-world:pythonlatest raorajath/flask-hello-world:latest'
+                sh 'docker push raorajath/flask-hello-world:latest'
             }
         }
 
         stage('Docker Run') {
             steps {
-            script {
-            echo 'Running Docker container...'
-            sh "docker run -p 8181:80 -d $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG"
+                script {
+                    echo 'Running Docker container...'
+                    sh "docker run -p 8080:80 -d raorajath/flask-hello-world:pythonlatest"
+                }
             }
         }
-    }
+
         stage('Final Cleanup') {
             steps {
                 echo 'Final cleanup..'
@@ -60,7 +63,7 @@ pipeline {
             steps {
                 script {
                     echo 'Publishing Docker image...'
-                    sh "docker push $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG"
+                    sh "docker push raorajath/flask-hello-world:pythonlatest"
                 }
             }
         }
@@ -69,7 +72,7 @@ pipeline {
             steps {
                 script {
                     echo 'Pulling Docker image...'
-                    sh "docker pull $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG"
+                    sh "docker pull raorajath/flask-hello-world:pythonlatest"
                 }
             }
         }
