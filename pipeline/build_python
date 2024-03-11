@@ -31,24 +31,21 @@ pipeline {
             }
         }
 
-        stage('Build and Run with Docker') {
+        stage('Docker Publish Python') {
             steps {
                 script {
-                    // Build Docker image with 'latest' tag
-                    sh 'docker build -t bharathoptdocker/python:latest .'
+                    // Docker login using credentials
+                    withCredentials([usernamePassword(credentialsId: 'bkdockerid', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+                        
+                        def buildId = env.BUILD_ID
+                        def imageNameWithTag = "bharathoptdocker/python:$buildId"
+                        sh "docker tag bharathoptdocker/python:latest $imageNameWithTag"
+                        sh "docker push $imageNameWithTag"
 
-                    // Run Docker container on a different port
-                    sh 'docker run -p 8586:8585 -d bharathoptdocker/python:latest'
-                }
-            }
-        }
-
-        stage('Push Docker Image with Tag') {
-            steps {
-                script {
-                    // Push the Docker image to Docker Hub with 'tagname' tag
-                    sh 'docker tag bharathoptdocker/python:latest bharathoptdocker/python:tagname'
-                    sh 'docker push bharathoptdocker/python:tagname'
+                        def imageNameWithLatest = "bharathoptdocker/python:latest"
+                        sh "docker push $imageNameWithLatest"
+                    }
                 }
             }
         }
