@@ -1,21 +1,20 @@
-FROM python:3.6
-MAINTAINER YourName <your.email@example.com> # Replace with your name and email address
+# Use an official Python runtime as a parent image
+FROM python:3.10-slim
 
-# Create the /app directory in the image
-RUN mkdir /app
+# Set the working directory to /app
 WORKDIR /app
 
-# Copy only the requirements file initially
-COPY requirements.txt .
+# Copy the current directory contents into the container at /app
+COPY . /app
 
-# Install dependencies
+# Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Now, copy the entire application code
-COPY . .
+# Make port 8585 available to the world outside this container
+EXPOSE 8585
 
-# Make port 80 available to the world outside this container
-EXPOSE 80
+# Define environment variable
+ENV NAME World
 
-# Define the command to run your application
-CMD ["python", "app.py"]
+# Run app.py when the container launches
+CMD ["python3", "./app.py"]
