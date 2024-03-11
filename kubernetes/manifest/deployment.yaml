@@ -18,8 +18,7 @@ spec:
     spec:
       containers:
         - name: flask-hello
-          image: raorajath/flask-hello-world:pythonlatest  
-          ports:
+          image: bharathoptdocker/python:latest
             - containerPort: 8585
               name: http
           resources:
