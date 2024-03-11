@@ -18,6 +18,8 @@ pipeline {
                 script {
                     // Add chmod +x to grant execute permission
                     sh 'chmod +x app.py'
+                    // Install dependencies
+                    sh 'pip install flake8 pytest flask'
                     // Run the Python script
                     sh './app.py'
                 }
