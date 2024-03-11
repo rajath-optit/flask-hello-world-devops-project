@@ -2,13 +2,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: flask-hello-world-devops-project-service
-  namespace: optit-lab-python  # Specify the namespace here
-labels:
-  app: flask-hello
+  namespace: optit-lab-python
 spec:
   selector:
     app: flask-hello
-    tier: frontend
   ports:
-    - port: 8585
+    - protocol: TCP
+      port: 8585
       targetPort: 8585
+  type: ClusterIP
