@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: flask-hello
-        image: bharathoptdocker/python:latest
+        image: bharathoptdocker/python:tagname
         ports:
         - containerPort: 8585
           name: http
