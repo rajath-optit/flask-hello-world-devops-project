@@ -16,12 +16,10 @@ pipeline {
         stage('Build with python') {
             steps {
                 script {
-                    // Add chmod +x to grant execute permission
-                    sh 'chmod +x app.py'
                     // Install dependencies
                     sh 'pip install flake8 pytest flask'
-                    // Run the Python script with explicit Python interpreter
-                    sh 'python3 ./app.py'
+                    // Run the Python script in the background
+                    sh 'nohup python3 ./app.py > /dev/null 2>&1 &'
                 }
             }
         }
