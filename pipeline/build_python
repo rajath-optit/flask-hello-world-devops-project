@@ -13,7 +13,7 @@ pipeline {
             }
         }
 
-        stage('Build with Python and Docker') {
+        stage('Build with Python') {
             steps {
                 script {
                     // Install dependencies
