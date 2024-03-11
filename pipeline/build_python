@@ -16,7 +16,10 @@ pipeline {
         stage('Build with python') {
             steps {
                 script {
-                    sh './app.py' 
+                    // Add chmod +x to grant execute permission
+                    sh 'chmod +x app.py'
+                    // Run the Python script
+                    sh './app.py'
                 }
             }
         }
