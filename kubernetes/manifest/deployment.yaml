@@ -1,30 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flask-hello-deployment
-  namespace: optit-lab-python 
+  name: flask-hello-world-devops-project-deployment
+  namespace: optit-lab-python
 
 spec:
   replicas: 3
   selector:
     matchLabels:
       app: flask-hello
-      tier: frontend
   template:
     metadata:
       labels:
         app: flask-hello
-        tier: frontend
     spec:
       containers:
-        - name: flask-hello
-          image: bharathoptdocker/python:latest
-            - containerPort: 8585
-              name: http
-          resources:
-            limits:
-              cpu: 200m  # Adjust the CPU limit based on your needs
-              memory: 256Mi  # Adjust the memory limit based on your needs
-            requests:
-              cpu: 100m  # Adjust the CPU request based on your needs
-              memory: 128Mi  # Adjust the memory request based on your needs
+      - name: flask-hello
+        image: bharathoptdocker/python:latest
+        ports:
+        - containerPort: 8585
+          name: http
+        resources:
+          limits:
+            cpu: 200m  # Adjust the CPU limit based on your needs
+            memory: 256Mi  # Adjust the memory limit based on your needs
+          requests:
+            cpu: 100m  # Adjust the CPU request based on your needs
+            memory: 128Mi  # Adjust the memory request based on your needs
