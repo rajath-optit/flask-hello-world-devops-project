@@ -13,10 +13,28 @@ pipeline {
             }
         }
 
+        stage('Build with Python and Docker') {
+            steps {
+                script {
+                    // Install dependencies
+                    sh 'pip install flake8 pytest flask'
+
+                    // Build Docker image
+                    sh 'docker build -t bharathoptdocker/python:latest .'
+
+                    // Push Docker image to Docker Hub
+                    sh 'docker push bharathoptdocker/python:latest'
+
+                    // Run the Python script in the background
+                    sh 'nohup python3 ./app.py > /dev/null 2>&1 &'
+                }
+            }
+        }
+
         stage('Build and Run with Docker') {
             steps {
                 script {
-                    // Build Docker image
+                    // Build Docker image with 'latest' tag
                     sh 'docker build -t bharathoptdocker/python:latest .'
 
                     // Run Docker container on a different port
@@ -25,19 +43,11 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    // Push the Docker image to Docker Hub with 'latest' tag
-                    sh 'docker push bharathoptdocker/python:latest'
-                }
-            }
-        }
-
         stage('Push Docker Image with Tag') {
             steps {
                 script {
-                    // Push the Docker image to Docker Hub with specified tag
+                    // Push the Docker image to Docker Hub with 'tagname' tag
+                    sh 'docker tag bharathoptdocker/python:latest bharathoptdocker/python:tagname'
                     sh 'docker push bharathoptdocker/python:tagname'
                 }
             }
