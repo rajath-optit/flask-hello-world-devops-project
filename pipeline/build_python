@@ -13,25 +13,14 @@ pipeline {
             }
         }
 
-        stage('Build with Python') {
-            steps {
-                script {
-                    // Install dependencies
-                    sh 'pip install flake8 pytest flask'
-                    // Run the Python script in the background
-                    sh 'nohup python3 ./app.py > /dev/null 2>&1 &'
-                }
-            }
-        }
-
         stage('Build and Run with Docker') {
             steps {
                 script {
                     // Build Docker image
                     sh 'docker build -t bharathoptdocker/python:latest .'
 
-                    // Run Docker container
-                    sh 'docker run -p 8585:8585 -d bharathoptdocker/python:latest'
+                    // Run Docker container on a different port
+                    sh 'docker run -p 8586:8585 -d bharathoptdocker/python:latest'
                 }
             }
         }
