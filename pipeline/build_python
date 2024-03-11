@@ -13,39 +13,10 @@ pipeline {
             }
         }
 
-        stage('Build with Gradle') {
+        stage('Build with python') {
             steps {
                 script {
-                    // Assuming your Gradle wrapper is in the root directory of your repository
-                    sh './app.py' // Command to execute Gradle build
-                }
-            }
-        }
-
-        stage('Docker Build') {
-            steps {
-                script {
-                    // Assuming your Dockerfile is in the root directory of your repository
-                    docker.build("flask-hello-world-devops-project", ".") // Replace "your-docker-image-name" with your desired image name
-                }
-            }
-        }
-        stage('Docker Publish') {
-            steps {
-                script {
-                    // Docker login using credentials
-                    withCredentials([usernamePassword(credentialsId: 'bkdockerid', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
-                        
-                        def buildId = env.BUILD_ID
-                        def imageNameWithTag = "docker push bharathoptdocker/python:tagname"
-                        sh "docker tag flask-hello-world-devops-project $imageNameWithTag"
-                        sh "docker push $imageNameWithTag"
-
-                        def imageNameWithLatest = "docker push bharathoptdocker/python:tagname"
-                        sh "docker tag flask-hello-world-devops-project $imageNameWithLatest"
-                        sh "docker push $imageNameWithLatest"
-                    }
+                    sh './app.py' 
                 }
             }
         }
