@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: v2
 kind: Service
 metadata:
   name: flask-hello-world-devops-project-service
@@ -10,4 +10,4 @@ spec:
     - protocol: TCP
       port: 8585
       targetPort: 8585
-  type: ClusterIP
+  
