@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flask-hello-world-devops-project-deployment
+  name:  optit-lab-service
   namespace: optit-lab-python
 
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: flask-hello
+      app:  optit-lab-service
   template:
     metadata:
       labels:
-        app: flask-hello
+        app:  optit-lab-service
     spec:
       containers:
-      - name: flask-hello
+      - name:  optit-lab-service
         image: bharathoptdocker/python:latest
         ports:
         - containerPort: 8585
