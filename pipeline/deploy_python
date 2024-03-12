@@ -16,11 +16,16 @@ pipeline {
         stage('Build and Deploy to Kubernetes') {
             steps {
                 script {
+                    
                   // Deploy to Kubernetes
                     withCredentials([file(credentialsId: 'poc-kube-cluster-cred', variable: 'KUBECONFIG')]) {
+                    // Docker login using credentials
+                    withCredentials([usernamePassword(credentialsId: 'bkdockerid', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
                         sh 'mkdir -p $HOME/.kube/ && cat $KUBECONFIG > $HOME/.kube/config'
                         sh 'kubectl apply -f kubernetes/manifest/deployment.yaml -n optit-lab-python'
                         sh 'kubectl apply -f kubernetes/manifest/service.yaml -n optit-lab-python'
+                        }
                     }
                 }
             }
