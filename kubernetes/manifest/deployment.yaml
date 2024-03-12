@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  optit-lab-service
+  name:  optit-lab-python-service
   namespace: optit-lab-python
 
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app:  optit-lab-service
+      app:  optit-lab-python-service
   template:
     metadata:
       labels:
-        app:  optit-lab-service
+        app:  optit-lab-python-service
     spec:
       containers:
-      - name:  optit-lab-service
+      - name:  optit-lab-python-service
         image: bharathoptdocker/python:latest
         ports:
         - containerPort: 8585
