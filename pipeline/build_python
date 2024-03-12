@@ -45,6 +45,10 @@ pipeline {
 
                         def imageNameWithLatest = "bharathoptdocker/python:latest"
                         sh "docker push $imageNameWithLatest"
+                        echo"docker pulling"
+                        sh "docker pull $imageNameWithTag"
+                        echo"docker ps"
+                        sh "docker ps"
                     }
                 }
             }
